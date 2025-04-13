@@ -1,0 +1,8 @@
+# Run backup script daily at midnight (00:00)
+0 0 * * * /home/ubuntu/DevOps-Lite/scripts/backup.sh
+
+# Disk monitoring every hour (at the beginning of the hour)
+0 * * * * /home/ubuntu/DevOps-Lite/scripts/monitor_disk.sh
+
+# Check Nginx status every 5 minutes
+*/5 * * * * /home/ubuntu/DevOps-Lite/scripts/check_nginx.sh
