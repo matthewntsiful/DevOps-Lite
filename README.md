@@ -12,7 +12,7 @@ This project showcases:
 
 ## System Architecture
 
-![System Architecture](./imgs/architecture/nginx-reverse-proxy.png)
+![System Architecture](./imgs/architecture/architecture.png)
 
 ```
                      ┌─────────────┐
