@@ -1,5 +1,9 @@
 # DevOps Lite Project
 
+![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
+![Version](https://img.shields.io/badge/Version-1.0-orange)
+
 ## Project Overview
 
 DevOps Lite is a hands-on project demonstrating essential DevOps practices including Linux system administration, Bash scripting, Git/GitHub version control, and Nginx configuration. The project implements a multi-service infrastructure with automated management and traffic routing on an AWS EC2 instance running Ubuntu Server 24.04 LTS.
@@ -9,6 +13,27 @@ This project showcases:
 - Automation through Bash scripts and cron jobs
 - Web traffic management with Nginx (reverse proxy and load balancing)
 - Version control best practices with Git/GitHub
+
+## Table of Contents
+
+- [System Architecture](#system-architecture)
+- [Repository Structure](#repository-structure)
+- [Implementation Details](#implementation-details)
+  - [Module 1: Provisioning the Ubuntu EC2 Instance](#module-1-provisioning-the-ubuntu-ec2-instance)
+  - [Module 2: User, Group, and Permission Management](#module-2-user-group-and-permission-management)
+  - [Module 3: Automation with Bash Scripts](#module-3-automation-with-bash-scripts)
+  - [Module 4: Nginx Configuration](#module-4-nginx-configuration)
+- [Backend Services](#backend-services)
+- [Getting Started](#getting-started)
+- [Testing and Verification](#testing-and-verification)
+- [Challenges and Solutions](#challenges-and-solutions)
+- [Design Decisions](#design-decisions)
+- [Future Enhancement Possibilities](#future-enhancement-possibilities)
+- [Screenshots](#screenshots)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Conclusion](#conclusion)
 
 ## System Architecture
 
@@ -71,14 +96,8 @@ DevOps-Lite/
 **Security Group Configuration:**
 - SSH (Port 22): Allowed for administrative access
 - HTTP (Port 80): Allowed for web traffic
-- Custom TCP (Port 8000): Allowed for Python app access (closed after intitial connectivity test)
-- Custom TCP (Port 3000 and 3001): Allowed for Node.js app access (closed after intitial connectivity test)
-
-**Initial Setup:**
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install git nginx curl -y
-```
+- Custom TCP (Port 8000): Allowed for Python app access (closed after initial connectivity test)
+- Custom TCP (Port 3000 and 3001): Allowed for Node.js app access (closed after initial connectivity test)
 
 ### Module 2: User, Group, and Permission Management
 
@@ -292,8 +311,122 @@ The project can be extended with:
 ![Security Group](./imgs/aws/security-group.png)
 
 ### Testing Results
-![Python Server Connection](./imgs/testing/python-server-connection/)
-![Node.js Load Balancing](./imgs/testing/nodejs-server-connection/)
+![Python Server Connection](./imgs/testing/python-server-connection.png)
+![Node.js Load Balancing](./imgs/testing/nodejs-server-connection.png)
+
+## Getting Started
+
+Follow these steps to set up your own instance of this project:
+
+### Prerequisites
+
+- AWS account with permissions to create EC2 instances
+- Basic knowledge of Linux commands
+- SSH client for connecting to EC2 instance
+
+### Installation Steps
+
+1. **Launch EC2 Instance**
+   ```bash
+   # Follow AWS console instructions to launch a t3.micro with Ubuntu 24.04 LTS
+   ```
+
+2. **Configure Security Groups**
+   - Create a security group with the following rules:
+     - SSH (Port 22): Your IP
+     - HTTP (Port 80): 0.0.0.0/0
+     - Initially open ports 8000, 3000, 3001 for testing
+
+3. **Connect to Your Instance**
+   ```bash
+   ssh -i your-key.pem ubuntu@your-instance-ip
+   ```
+
+4. **Initial Setup**
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   sudo apt install git nginx curl -y
+   ```
+
+5. **Clone Repository**
+   ```bash
+   git clone https://github.com/yourusername/DevOps-Lite.git
+   cd DevOps-Lite
+   ```
+
+6. **Run Setup Scripts**
+   ```bash
+   sudo ./scripts/setup_users.sh
+   ```
+
+7. **Configure Nginx**
+   ```bash
+   sudo cp nginx-configs/reverse-proxy.conf /etc/nginx/sites-available/
+   sudo cp nginx-configs/load-balancer.conf /etc/nginx/sites-available/
+   sudo ln -s /etc/nginx/sites-available/reverse-proxy.conf /etc/nginx/sites-enabled/
+   sudo ln -s /etc/nginx/sites-available/load-balancer.conf /etc/nginx/sites-enabled/
+   sudo nginx -t
+   sudo systemctl restart nginx
+   ```
+
+8. **Setup Cron Jobs**
+   ```bash
+   sudo crontab -e
+   # Add the content from cron/crontab-sample.txt
+   ```
+
+9. **Validation**
+   - Verify user setup: `cat /etc/passwd | grep -E 'devadmin|webadmin|automation'`
+   - Check Nginx: `systemctl status nginx`
+   - Test web access: Open your browser to `http://your-instance-ip`
+
+## Troubleshooting
+
+### Common Issues
+
+**Issue: Unable to connect to EC2 instance**
+- Verify security group settings allow SSH from your IP
+- Check if the instance is running
+- Ensure you're using the correct key pair
+
+**Issue: Nginx configuration test fails**
+- Error in configuration syntax: Check for typos in config files
+- Solution: Run `sudo nginx -t` to see specific errors
+
+**Issue: Web service not accessible**
+- Check if Nginx is running: `sudo systemctl status nginx`
+- Verify backend services are running on expected ports: `ss -tulpn | grep -E '8000|3000|3001'`
+- Check Nginx error logs: `sudo tail -f /var/log/nginx/error.log`
+
+**Issue: Automation scripts not running**
+- Verify cron is active: `systemctl status cron`
+- Check script permissions: `ls -la ~/DevOps-Lite/scripts/`
+- Review cron log: `sudo grep CRON /var/log/syslog`
+
+## Contributing
+
+Contributions to the DevOps-Lite project are welcome! Here's how you can contribute:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m "Add some feature"
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. **Create a Pull Request**
+
+Please make sure your code follows the existing style and includes appropriate tests and documentation.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Conclusion
 
